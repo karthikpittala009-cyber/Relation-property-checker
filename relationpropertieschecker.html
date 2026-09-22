@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relation Properties Checker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 7px;
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            outline: none;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .example {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .check-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .example-btn {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .example-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .clear-btn {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .clear-btn:hover {
+            background: #fecaca;
+        }
+
+        #result {
+            display: none;
+        }
+
+        .summary {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .summary strong {
+            color: #1d4ed8;
+        }
+
+        .properties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .property {
+            border: 1px solid #e5e7eb;
+            border-radius: 11px;
+            padding: 17px;
+            background: #fff;
+        }
+
+        .property h3 {
+            font-size: 17px;
+            margin-bottom: 7px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .yes {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .no {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .details {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .special {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .special h3 {
+            margin-bottom: 10px;
+        }
+
+        .special-item {
+            padding: 7px 0;
+            font-size: 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #b91c1c;
+            padding: 14px;
+            border-radius: 9px;
+            border: 1px solid #fecaca;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 24px;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Relation Properties Checker</h1>
+    <p>Analyze relations in Discrete Mathematics quickly and accurately</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Enter Relation</h2>
+
+        <div class="input-group">
+            <label for="setInput">Set A</label>
+            <input
+                type="text"
+                id="setInput"
+                placeholder="Example: 1,2,3"
+            >
+            <div class="example">
+                Enter elements separated by commas.
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="relationInput">Relation R</label>
+            <textarea
+                id="relationInput"
+                placeholder="Example: (1,1),(2,2),(3,3),(1,2),(2,1)"
+            ></textarea>
+
+            <div class="example">
+                Format: (a,b),(c,d),(e,f)
+            </div>
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkRelation()">
+                Check Relation
+            </button>
+
+            <button class="example-btn" onclick="loadExample()">
+                Load Example
+            </button>
+
+            <button class="clear-btn" onclick="clearAll()">
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <div id="result" class="card">
+
+        <h2>Analysis Result</h2>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="properties" id="properties"></div>
+
+        <div class="special">
+            <h3>Relation Classification</h3>
+            <div id="classification"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    Relation Properties Checker • Discrete Mathematics
+</footer>
+
+
+<script>
+
+function normalize(value) {
+    return value.trim();
+}
+
+
+function parseSet(input) {
+
+    if (!input.trim()) {
+        throw new Error("Please enter the set A.");
+    }
+
+    const values = input
+        .split(",")
+        .map(x => normalize(x))
+        .filter(x => x !== "");
+
+    if (values.length === 0) {
+        throw new Error("Set A cannot be empty.");
+    }
+
+    const unique = [...new Set(values)];
+
+    return unique;
+}
+
+
+function parseRelation(input) {
+
+    if (!input.trim()) {
+        return [];
+    }
+
+    const relation = [];
+
+    const regex = /\(\s*([^,()]+?)\s*,\s*([^,()]+?)\s*\)/g;
+
+    let match;
+
+    while ((match = regex.exec(input)) !== null) {
+
+        const first = normalize(match[1]);
+        const second = normalize(match[2]);
+
+        relation.push([first, second]);
+    }
+
+    if (relation.length === 0) {
+        throw new Error(
+            "Invalid relation format. Use: (1,1),(1,2),(2,3)"
+        );
+    }
+
+    return relation;
+}
+
+
+function hasPair(relation, a, b) {
+
+    return relation.some(
+        pair => pair[0] === a && pair[1] === b
+    );
+}
+
+
+function reflexive(A, R) {
+
+    for (const a of A) {
+        if (!hasPair(R, a, a)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function irreflexive(A, R) {
+
+    for (const a of A) {
+        if (hasPair(R, a, a)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function symmetric(R) {
+
+    for (const [a, b] of R) {
+
+        if (!hasPair(R, b, a)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function antisymmetric(R) {
+
+    for (const [a, b] of R) {
+
+        if (
+            a !== b &&
+            hasPair(R, b, a)
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function asymmetric(R) {
+
+    for (const [a, b] of R) {
+
+        if (hasPair(R, b, a)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+function transitive(R) {
+
+    for (const [a, b] of R) {
+
+        for (const [c, d] of R) {
+
+            if (b === c) {
+
+                if (!hasPair(R, a, d)) {
+                    return false;
+                }
+
+            }
+
+        }
+
+    }
+
+    return true;
+}
+
+
+function formatRelation(R) {
+
+    if (R.length === 0) {
+        return "∅";
+    }
+
+    return R
+        .map(pair => `(${pair[0]}, ${pair[1]})`)
+        .join(", ");
+}
+
+
+function addProperty(
+    title,
+    result,
+    explanation
+) {
+
+    const div = document.createElement("div");
+
+    div.className = "property";
+
+    div.innerHTML = `
+
+        <h3>${title}</h3>
+
+        <span class="status ${result ? "yes" : "no"}">
+            ${result ? "✓ YES" : "✗ NO"}
+        </span>
+
+        <div class="details">
+            ${explanation}
+        </div>
+
+    `;
+
+    document
+        .getElementById("properties")
+        .appendChild(div);
+}
+
+
+function checkRelation() {
+
+    const error = document.getElementById("error");
+
+    error.style.display = "none";
+
+    try {
+
+        const A = parseSet(
+            document.getElementById("setInput").value
+        );
+
+        const R = parseRelation(
+            document.getElementById("relationInput").value
+        );
+
+
+        /*
+        Validate that all relation elements
+        belong to the set.
+        */
+
+        for (const [a, b] of R) {
+
+            if (!A.includes(a) || !A.includes(b)) {
+
+                throw new Error(
+                    `Pair (${a},${b}) contains an element not present in set A.`
+                );
+
+            }
+
+        }
+
+
+        const isReflexive = reflexive(A, R);
+        const isIrreflexive = irreflexive(A, R);
+        const isSymmetric = symmetric(R);
+        const isAntisymmetric = antisymmetric(R);
+        const isAsymmetric = asymmetric(R);
+        const isTransitive = transitive(R);
+
+
+        /*
+        Derived classifications
+        */
+
+        const isEquivalence =
+            isReflexive &&
+            isSymmetric &&
+            isTransitive;
+
+
+        const isPartialOrder =
+            isReflexive &&
+            isAntisymmetric &&
+            isTransitive;
+
+
+        const isStrictPartialOrder =
+            isIrreflexive &&
+            isTransitive;
+
+
+        document.getElementById("summary").innerHTML = `
+
+            <strong>Set A:</strong>
+            { ${A.join(", ")} }
+
+            <br><br>
+
+            <strong>Relation R:</strong>
+            { ${formatRelation(R)} }
+
+        `;
+
+
+        const properties =
+            document.getElementById("properties");
+
+        properties.innerHTML = "";
+
+
+        addProperty(
+            "Reflexive",
+            isReflexive,
+            isReflexive
+                ? "Every element a ∈ A has (a,a) ∈ R."
+                : "At least one element a ∈ A does not have (a,a) ∈ R."
+        );
+
+
+        addProperty(
+            "Irreflexive",
+            isIrreflexive,
+            isIrreflexive
+                ? "No element a ∈ A has (a,a) ∈ R."
+                : "At least one pair of the form (a,a) exists."
+        );
+
+
+        addProperty(
+            "Symmetric",
+            isSymmetric,
+            isSymmetric
+                ? "Whenever (a,b) ∈ R, (b,a) ∈ R."
+                : "There exists (a,b) ∈ R but (b,a) ∉ R."
+        );
+
+
+        addProperty(
+            "Antisymmetric",
+            isAntisymmetric,
+            isAntisymmetric
+                ? "If (a,b) and (b,a) are in R, then a = b."
+                : "There exists distinct a,b such that both (a,b) and (b,a) are in R."
+        );
+
+
+        addProperty(
+            "Asymmetric",
+            isAsymmetric,
+            isAsymmetric
+                ? "Whenever (a,b) ∈ R, (b,a) ∉ R."
+                : "There exists a pair whose reverse also belongs to R."
+        );
+
+
+        addProperty(
+            "Transitive",
+            isTransitive,
+            isTransitive
+                ? "Whenever (a,b) and (b,c) are in R, (a,c) is also in R."
+                : "At least one required transitive pair is missing."
+        );
+
+
+        let classificationHTML = "";
+
+
+        classificationHTML += `
+            <div class="special-item">
+                ${isEquivalence ? "✅" : "❌"}
+                <strong>Equivalence Relation:</strong>
+                ${isEquivalence ? "Yes" : "No"}
+                <br>
+                Requires Reflexive + Symmetric + Transitive.
+            </div>
+        `;
+
+
+        classificationHTML += `
+            <div class="special-item">
+                ${isPartialOrder ? "✅" : "❌"}
+                <strong>Partial Order:</strong>
+                ${isPartialOrder ? "Yes" : "No"}
+                <br>
+                Requires Reflexive + Antisymmetric + Transitive.
+            </div>
+        `;
+
+
+        classificationHTML += `
+            <div class="special-item">
+                ${isStrictPartialOrder ? "✅" : "❌"}
+                <strong>Strict Partial Order:</strong>
+                ${isStrictPartialOrder ? "Yes" : "No"}
+                <br>
+                Requires Irreflexive + Transitive.
+            </div>
+        `;
+
+
+        document.getElementById("classification").innerHTML =
+            classificationHTML;
+
+
+        document.getElementById("result").style.display =
+            "block";
+
+
+        document
+            .getElementById("result")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+    catch (err) {
+
+        error.textContent = err.message;
+
+        error.style.display = "block";
+
+        document.getElementById("result").style.display =
+            "none";
+    }
+}
+
+
+function loadExample() {
+
+    document.getElementById("setInput").value =
+        "1,2,3";
+
+    document.getElementById("relationInput").value =
+        "(1,1),(2,2),(3,3),(1,2),(2,1)";
+
+    checkRelation();
+}
+
+
+function clearAll() {
+
+    document.getElementById("setInput").value = "";
+
+    document.getElementById("relationInput").value = "";
+
+    document.getElementById("result").style.display =
+        "none";
+
+    document.getElementById("error").style.display =
+        "none";
+}
+
+</script>
+
+</body>
+</html>
